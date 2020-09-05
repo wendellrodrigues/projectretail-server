@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/wendellrodrigues/projectretail-server/issues"
   },
-  "homepage": "https://github.com/wendellrodrigues/projectretail-server#readme"
+  "homepage": "https://github.com/wendellrodrigues/projectretail-server#readme",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "socket.io": "^2.3.0"
+  }
 }
