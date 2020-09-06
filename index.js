@@ -1,8 +1,8 @@
-const express       = require ('express');
-const routes        = require('./routes/routes')
-
+const express         = require ('express');
+const routes          = require('./routes/routes')
 
 const app       = express();
+
 
 //Routes PATH
 app.use('/routes', routes);
