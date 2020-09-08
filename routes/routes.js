@@ -11,7 +11,7 @@ const helpers   = require('../helpers/helpers');
  */
 router
   .route('/test')
-  .post(
+  .get(
     helpers.sendTestMsg
   );
 
@@ -24,6 +24,13 @@ router
   .route('/getUser')
   .post(
     helpers.getUserData
+  );
+
+
+router
+  .route('/clearUser')
+  .post(
+    helpers.clearUserData
   );
 
 

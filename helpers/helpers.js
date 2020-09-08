@@ -1,14 +1,6 @@
 const admin           = require('firebase-admin');
 const serviceAccount  = require('../FirebaseAccountKeys.json')
-
-
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-})
-
-const db = admin.firestore()
-
+const users           = require('../users/users')
 
 
 module.exports = { 
@@ -20,9 +12,7 @@ module.exports = {
    * 
    */
   sendTestMsg: async(req, res) => {
-    console.log('We have a request from arduino');
-    res.json("Works")
-    res.json(process.env.FIREBASE.type)
+    res.json({name: "Wen"})
   },
 
   /**
@@ -33,13 +23,19 @@ module.exports = {
    */
   getUserData: async(req, res) => {
 
-    const exampleUser = req.id
-    await db.collection('users').get().then((snapshot) => {
-      snapshot.forEach(doc => {
-        if(doc.id == exampleUser) res.json(doc.data())
-      });
-    })
+    const userId = req.body.id
+ 
+    users.getUserWithId(userId)
+
+    res.status(200).send()
+
   },
+
+  clearUserData: async(req, res) => {
+    users.clearUserFromDevice()
+    
+    res.status(200).send()
+  }
 
 
 }
