@@ -23,6 +23,9 @@ module.exports = {
    */
   getUserData: async(req, res) => {
 
+    //First clear user
+    users.clearUserFromDevice()
+    
     const userId = req.body.id
  
     users.getUserWithId(userId)
