@@ -1,5 +1,5 @@
 const admin           = require('firebase-admin');
-const serviceAccount  = require('../FirebaseAccountKeys.json')
+const serviceAccount  = require('../keys/FirebaseAccountKeys.json')
 const users           = require('../users/users')
 
 
@@ -25,7 +25,7 @@ module.exports = {
 
     //First clear user
     users.clearUserFromDevice()
-    
+
     const userId = req.body.id
  
     users.getUserWithId(userId)
