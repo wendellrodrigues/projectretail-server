@@ -8,11 +8,7 @@ admin.initializeApp({
 
 const db = admin.firestore()
 
-
-
 module.exports = { 
-
-
 
   returnState: () => {
     console.log(currentUser)
@@ -31,11 +27,14 @@ module.exports = {
     //console.log(state)
 
     const userId = uid
+    
     //Add iBeacon uid and add it to add it to user collection array of visited beacons
+    
 
     await db.collection('users').get().then((snapshot) => {
       snapshot.forEach(doc => {
         if(doc.id == userId) {
+          console.log('found user')
           const userData = doc.data()
           currentUser.user = userData
           console.log(currentUser.user)
@@ -45,11 +44,7 @@ module.exports = {
   },
 
 
-  /**
-   *  Clears the state of the iPad 
-   *
-   * @return  void
-   * */
+ 
    clearUserFromDevice() {
      currentUser.user = null
    }
