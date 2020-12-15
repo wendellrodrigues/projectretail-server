@@ -13,38 +13,26 @@ router
     helpers.sendTestMsg
   );
 
-
- /**
- * Gets the user information and updates the current user
- * @route   /routes/getUser
+/**
+ * Adds a user to a list of nearby users on a Firestore beacon object
+ * @route   /routes/addUser
  */
-router
-  .route('/getUser')
+router 
+.route('/addUser')
   .post(
-    helpers.getUserData
-  );
-
+    helpers.addUserData
+  )
 
 /**
- * Clears the current user   
- * @route   /routes/clearUser
+ * Removes a user from a list of nearby users on a Firestore beacon object
+ * @route   /routes/removeUser
  */
 router
-  .route('/clearUser')
+.route('/removeUser')
   .post(
-    helpers.clearUserData
-  );
+    helpers.removeUserData
+  )
 
-
-/**
- * Sends the current user to the store client on request  
- * @route   /routes/sendUser
- */
-router
-  .route('/sendUser')
-    .post(
-      helpers.sendUserData
-    )
 
 
 

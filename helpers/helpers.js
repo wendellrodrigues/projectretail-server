@@ -1,7 +1,7 @@
 const admin           = require('firebase-admin');
 const serviceAccount  = require('../FirebaseAccountKeys.json')
 const users           = require('../users/users')
-const currentUser     = require('../users/currentUser')
+
 
 const db = admin.firestore()
 
@@ -19,50 +19,126 @@ module.exports = {
  
 
   /**
-   * Gets user data
-   * @param   req   The request. Includes id
-   * @param   res   The response
-   * 
-   */
-  getUserData: async(req, res) => {
 
-    //If state is not null (beacon in use) return error
-    if(currentUser.user !== null) {
-      res.status(200).send()
+    Firestore 'Beacons' collection holds beacon objects
+    Beacon objects contain an array of nearby users called 'nearbyUsers'
+
+    Adds the user's id and the user's first name to nearbyUsers for a specific beacon
+
+    req: {
+      "userId"      : {String},
+      "beaconId"    : {String},
+      "beaconMajor" : {Int},
+      "beaconMinor" : {Int}
+    }
+    
+  */
+  addUserData: async(req, res) => {
+
+    //User ID
+    const userId = req.body.userId
+
+    //Id of the beacon attempting to connect to
+    const beaconId = req.body.beaconId
+
+    //Major and minor
+    const beaconMajor = req.body.beaconMajor
+    const beaconMinor = req.body.beaconMinor
+  
+    //If request sent without fields, return 400
+    if( !userId ||
+        !beaconId ||
+        !beaconMajor ||
+        !beaconMinor)
+      { 
+        res.status(400).send() 
+      }
+
+    //Get user object
+    let user = await users.getUserWithId(userId)
+    //Make sure that user obj exists
+    if(!user) res.status(400).send()
+
+    //Get Beacon object
+    let shelf = await users.getShelf(beaconId, beaconMajor, beaconMinor)
+    //Make sure that beacon/shelf obj exists
+    if(!shelf) res.status(400).send()
+
+
+    //Create user object to update shelf with
+    const userObj = {
+      id: user.uid,
+      name: user.firstName
     }
 
-    //First clear user
-    users.clearUserFromDevice()
-
-    const userId = req.body.id
- 
-    users.getUserWithId(userId)
-
-    console.log(currentUser)
-
-    res.status(200).send()
-
-    //Send data to arduino 
+    //Update shelf with a user object (add user object)
+    await users.addUserToShelf(beaconId, beaconMajor, beaconMinor, userObj)
+      .then(() => {
+        res.status(200).send()
+      })
 
   },
 
-  clearUserData: async(req, res) => {
-    users.clearUserFromDevice()
-    console.log(currentUser)
-    res.status(200).send()
-  },
+  /**
 
+    Firestore 'Beacons' collection holds beacon objects
+    Beacon objects contain an array of nearby users called 'nearbyUsers'
 
-  sendUserData: async(req, res) => {
+    Removes the user's id and the user's first name from nearbyUsers for a specific beacon
 
-    if(currentUser.user == null) {
-      res.status(200).send(null)
+    req: {
+      "userId"      : {String},
+      "beaconId"    : {String},
+      "beaconMajor" : {Int},
+      "beaconMinor" : {Int}
+    }
+    
+  */
+  removeUserData: async(req, res) => {
+
+    //User ID
+    const userId = req.body.userId
+
+    //Id of the beacon attempting to connect to
+    const beaconId = req.body.beaconId
+
+    //Major and minor
+    const beaconMajor = req.body.beaconMajor
+    const beaconMinor = req.body.beaconMinor
+  
+    //If request sent without fields, return 400
+    if( !userId ||
+        !beaconId ||
+        !beaconMajor ||
+        !beaconMinor)
+      { 
+        res.status(400).send() 
+      }
+
+    //Get user object
+    let user = await users.getUserWithId(userId)
+    //Make sure that user obj exists
+    if(!user) res.status(400).send()
+
+    //Get Beacon object
+    let shelf = await users.getShelf(beaconId, beaconMajor, beaconMinor)
+    //Make sure that beacon/shelf obj exists
+    if(!shelf) res.status(400).send()
+
+    //Create user object to update shelf with
+    const userObj = {
+      id: user.uid,
+      name: user.firstName
     }
 
-    console.log(currentUser)
+    //Update shelf with a user object (remove user object)
+    await users.removeUserFromShelf(beaconId, beaconMajor, beaconMinor, userObj)
+      .then(() => {
+        res.status(200).send()
+      })
 
-    res.status(200).send(currentUser)
+    res.status(200).send()
 
-  }
+  },
 
 }
