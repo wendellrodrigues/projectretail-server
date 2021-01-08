@@ -16,6 +16,95 @@ module.exports = {
   sendTestMsg: async(req, res) => {
     res.json({name: "Test message"})
   },
+
+
+
+
+  /**
+
+    Firestore 'Users' collection holds userobjects
+    Return a user object
+
+    req: {
+      "userId"    : {String},
+    }
+
+    res: {
+      "maleWaistSize"                 : {Int},
+      "hasEnteredSizingPreferences"   : {String},
+      "styles"                        : [String],
+      "uid"                           : {String},
+      "maleLengthSize"                : {Int},
+      "femalePantsSize"               : {String},
+      "femaleShirtSize"               : {String},
+      "maleShirtSize"                 : {String},
+      "firstName"                     : {String},
+      "email"                         : {String}
+    }
+    
+  */
+  getUser: async(req, res) => {
+
+    console.log("Got GET USER request")
+
+    const userId = req.body.userId
+
+    if(!userId) {
+      res.status(400).send()
+      return
+    }
+
+    const user = await users.getUserWithId(userId)
+
+    res.json(user)
+
+  },
+
+
+
+  /**
+
+    Firestore 'Beacons' collection holds beacon objects
+    Beacon objects contain an array of nearby users called 'nearbyUsers'
+
+    Find the nearbyUsers of a specific beacon and responds with the array
+
+    req: {
+      "beaconId"    : {String},
+      "beaconMajor" : {Int},
+      "beaconMinor" : {Int}
+    }
+
+    res: {
+      [
+        {
+          "id": {String},
+          "name": {String}
+        },
+      ]
+    }
+    
+  */
+  getNearbyUsers: async(req, res) => {
+
+    console.log("Got request")
+
+    const beaconId = req.body.beaconId
+    const major = req.body.beaconMajor
+    const minor = req.body.beaconMinor
+
+    if( !beaconId ||
+        !major ||
+        !minor) {
+          res.status(400).send()
+          return
+        }
+
+    const nearbyUsers = await users.getNearbyUsersFromShelf(beaconId, major, minor)
+
+    res.json(nearbyUsers)
+
+  },
  
 
   /**
@@ -44,7 +133,7 @@ module.exports = {
     //Major and minor
     const beaconMajor = req.body.beaconMajor
     const beaconMinor = req.body.beaconMinor
-  
+
     //If request sent without fields, return 400
     if( !userId ||
         !beaconId ||
@@ -64,7 +153,6 @@ module.exports = {
     //Make sure that beacon/shelf obj exists
     if(!shelf) res.status(400).send()
 
-
     //Create user object to update shelf with
     const userObj = {
       id: user.uid,
@@ -76,7 +164,6 @@ module.exports = {
       .then(() => {
         res.status(200).send()
       })
-
   },
 
   /**

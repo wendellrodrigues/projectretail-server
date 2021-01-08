@@ -12,10 +12,6 @@ const db = admin.firestore()
 
 module.exports = { 
 
-  returnState: () => {
-    console.log(currentUser)
-  },
-
   /**
    *  Gets User Object using ID
    *
@@ -25,6 +21,7 @@ module.exports = {
   getUserWithId: async(userId) => {
     return new Promise(async (resolve, reject) => {
       await db.collection('users').get().then((snapshot) => {
+        if(snapshot.empty) { reject() }
         snapshot.forEach(doc => {
           if(doc.id == userId) {
             const userData = doc.data()
@@ -34,7 +31,6 @@ module.exports = {
       })
     })
   },
-
 
 
     /**
@@ -65,6 +61,34 @@ module.exports = {
   },
 
 
+    /**
+   *  Gets Shelf Object's nearby usersusing ID, major, minor
+   *
+   * @param   id        id of shelf to be searched (from firestore)
+   * @param   major     major valueof shelf to be searched (from firestore)
+   * @param   minor     minor value of shelf to be searched (from firestore)
+   * @return            shelf object nearby users
+   * */
+  getNearbyUsersFromShelf: async(beaconId, major, minor) => {
+    return new Promise(async(resolve, reject) => {
+      await db.collection('beacons')
+        .where('UUID', '==', beaconId)
+        .where('major', '==', major)
+        .where('minor', '==', minor)
+        .get().then(
+          (snapshot) => {
+            if(snapshot.empty) {
+              reject()
+            }
+            snapshot.forEach(doc => {
+              const shelf = doc.data()
+              resolve(shelf.nearbyUsers)
+            }) 
+          }
+        )
+
+    })
+  },
 
   /**
     @param {String}   beaconId    The id of the beacon to search for
@@ -87,7 +111,7 @@ module.exports = {
         .get().then(
           (snapshot) => {
             if(snapshot.empty) {
-                reject()
+              reject()
             }
             snapshot.forEach(doc => {
               beaconRef = doc.data()
@@ -97,7 +121,10 @@ module.exports = {
         )
 
       //If no beacon was found with fields, reject
-      if(beaconDB_id == '') reject()
+      if(beaconDB_id == '') {
+        console.log('found nothing')
+        reject()
+      }
 
       //Check to see if user is already near a shelf. If so, reject
       const nearbyUsers = beaconRef.nearbyUsers
@@ -171,7 +198,7 @@ module.exports = {
       if(foundUser == true) {
         console.log('Removing')
         await db.collection('beacons').doc(beaconDB_id).update({
-          nearbyUsers: admin.firestore.FieldValue.arrayUnion(userObject)
+          nearbyUsers: admin.firestore.FieldValue.arrayRemove(userObject)
         });
       }
 

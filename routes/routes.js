@@ -13,6 +13,13 @@ router
     helpers.sendTestMsg
   );
 
+
+router
+  .route('/getNearbyUsers')
+  .post(
+    helpers.getNearbyUsers
+  )
+
 /**
  * Adds a user to a list of nearby users on a Firestore beacon object
  * @route   /routes/addUser
@@ -32,6 +39,12 @@ router
   .post(
     helpers.removeUserData
   )
+
+router
+  .route('/getUser')
+    .post(
+      helpers.getUser
+    )
 
 
 
