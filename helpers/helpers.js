@@ -45,8 +45,6 @@ module.exports = {
   */
   getUser: async(req, res) => {
 
-    console.log("Got GET USER request")
-
     const userId = req.body.userId
 
     if(!userId) {
@@ -55,9 +53,64 @@ module.exports = {
     }
 
     const user = await users.getUserWithId(userId)
-
     res.json(user)
 
+  },
+
+
+
+  /**
+
+    Firestore 'Beacons' collection holds beacon objects
+    Return Beacon Object (here referred to as the shelf it represents)
+
+    req: {
+      "beaconId"    : {String},
+      "beaconMajor" : {Int},
+      "beaconMinor" : {Int}
+    }
+
+    
+  */
+  getShelf: async(req, res) => {
+
+    const beaconId = req.body.beaconId
+    const major = req.body.beaconMajor
+    const minor = req.body.beaconMinor
+
+    if( !beaconId ||
+    !major ||
+    !minor) {
+      res.status(400).send()
+      return
+    }
+
+    const shelf = await users.getShelf(beaconId, major, minor)
+
+    res.json(shelf)
+  },
+
+
+  /**
+
+    Firestore 'Beacons' collection holds beacon objects
+    Return Beacon Object (here referred to as the shelf it represents)
+
+    req: {
+      "uid"    : {String}
+    }
+
+    
+  */
+  getShelfWithId: async(req, res) => {
+    const uid =  req.body.uid
+    if(!uid) {
+      res.status(400).send()
+      return
+    }
+    const shelf = await users.getShelfWithId(uid)
+
+    res.json(shelf)
   },
 
 

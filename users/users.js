@@ -60,6 +60,32 @@ module.exports = {
     })
   },
 
+      /**
+   *  Gets Shelf Object using uid
+   *
+   * @param  uid        uid of shelf to be searched (from firestore)
+   * @return            shelf object
+   * */
+  getShelfWithId: async(uid) => {
+    return new Promise(async (resolve, reject) => {
+      await db.collection('beacons')
+        .where('uid', '==', uid)
+        .get().then(
+          (snapshot) => {
+            if(snapshot.empty) {
+              reject()
+            }
+            snapshot.forEach(doc => {
+              const shelf = doc.data()
+              resolve(shelf)
+            })         
+          })
+    })
+  },
+
+
+
+
 
     /**
    *  Gets Shelf Object's nearby usersusing ID, major, minor

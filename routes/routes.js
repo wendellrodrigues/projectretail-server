@@ -14,6 +14,38 @@ router
   );
 
 
+/**
+ * Gets a user object
+ * @route   /routes/getUser
+ */
+router
+  .route('/getUser')
+    .post(
+      helpers.getUser
+    )
+
+
+/**
+ * Gets a shelf object
+ * @route   /routes/getUser
+ */
+router
+  .route('/getShelf')
+    .post(
+      helpers.getShelf
+    )
+
+
+router 
+  .route('/getShelfWithId')
+  .post(
+    helpers.getShelfWithId
+  )
+
+/**
+ * Gets the array of nearby users of a Firestore beacon object
+ * @route   /routes/getNearbyUsers
+ */
 router
   .route('/getNearbyUsers')
   .post(
@@ -40,11 +72,6 @@ router
     helpers.removeUserData
   )
 
-router
-  .route('/getUser')
-    .post(
-      helpers.getUser
-    )
 
 
 
