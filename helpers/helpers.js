@@ -262,12 +262,15 @@ module.exports = {
 
   findSize: async (req, res) => {
     console.log(req.body);
+
     var payload = JSON.stringify({
       shelf: req.body.shelf,
     });
 
+    console.log(payload);
+
     var options = {
-      hostname: "192.168.1.10",
+      hostname: "192.168.1.214",
       path: "/",
       method: "GET",
     };
@@ -288,6 +291,7 @@ module.exports = {
 
     httpRequest.on("error", function (e) {
       console.log("Error with the request:", e.message);
+      res.status(400).json({ error: e.message });
     });
 
     httpRequest.write(payload);
